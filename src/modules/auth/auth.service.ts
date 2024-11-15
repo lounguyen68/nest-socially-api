@@ -37,10 +37,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { username: user.name, sub: user._id };
+    let userResponse = {
+      ...user.toObject(),
+      password: undefined,
+    };
+    const payload = { _id: user._id, name: user.name };
 
     return {
-      user: plainToClass(UserDto, user.toObject()),
+      user: plainToClass(UserDto, userResponse),
       accessToken: this.jwtService.sign(payload),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '3d' }),
     };

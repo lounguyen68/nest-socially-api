@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Patch,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { UpdateAvatarUserDto } from './dto/update-avatar-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,5 +33,16 @@ export class UsersController {
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<User> {
     return this.usersService.findById(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update-avatar')
+  async updateAvatar(
+    @Body() userData: UpdateAvatarUserDto,
+    @Request() req,
+  ): Promise<User> {
+    const userId = req.user._id;
+
+    return this.usersService.update(userId, userData);
   }
 }

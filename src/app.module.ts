@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
-import { AuthController, AuthModule, AuthService } from './modules/auth';
-import { FilesModule, FilesService, FilesController } from './modules/files';
+import { AuthModule } from './modules/auth';
+import { FilesService } from './modules/files/files.service';
+import { FilesController } from './modules/files/files.controller';
+import { FilesModule } from './modules/files/files.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MembersModule } from './modules/members/members.module';
@@ -19,7 +21,7 @@ import { MembersModule } from './modules/members/members.module';
     ConversationsModule,
     MembersModule,
   ],
-  providers: [AuthService, FilesService],
-  controllers: [AuthController, FilesController],
+  providers: [FilesService],
+  controllers: [FilesController],
 })
 export class AppModule {}
