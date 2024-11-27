@@ -37,6 +37,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    user.deviceToken = userData.deviceToken;
+
+    await user.save();
+
     let userResponse = {
       ...user.toObject(),
       password: undefined,

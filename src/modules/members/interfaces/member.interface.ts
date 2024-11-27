@@ -1,21 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Member extends Document {
-  @Prop({ required: true, unique: true })
-  _id: string;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  userId: Types.ObjectId;
 
-  @Prop({ required: true })
-  userId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Conversation', required: true })
+  conversationId: Types.ObjectId;
 
-  @Prop()
-  conversationId: string;
-
-  @Prop({ default: Date.now() })
+  @Prop({ default: Date.now })
   lastTimeSeen: Date;
 
-  @Prop()
+  @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop()

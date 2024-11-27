@@ -27,12 +27,15 @@ export class UsersService {
   }
 
   async update(userId: string, userData: any): Promise<User> {
-    const user = await this.userModel.findById(userId).exec();
+    let user = await this.userModel.findById(userId).exec();
     if (!user) {
       throw new Error('User not found');
     }
 
-    user.avatarPath = userData.avatarPath;
+    user = {
+      ...user,
+      ...userData,
+    };
 
     await user.save();
 

@@ -1,25 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { MessageType } from 'src/common/const';
 
 @Schema({ timestamps: true })
 export class Message extends Document {
-  @Prop({ required: true, unique: true })
-  _id: string;
-
   @Prop({ required: true })
   type: MessageType;
 
   @Prop()
-  content: string;
+  content?: string;
 
-  @Prop()
-  senderId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Member', required: true })
+  senderId: Types.ObjectId;
 
-  @Prop()
-  conversationId: string;
+  @Prop({ type: Types.ObjectId, ref: 'Conversation', required: true })
+  conversationId: Types.ObjectId;
 
-  @Prop()
+  @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop()

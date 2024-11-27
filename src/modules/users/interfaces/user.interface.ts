@@ -16,6 +16,9 @@ export class User extends Document {
   avatarPath: string;
 
   @Prop()
+  deviceToken: string;
+
+  @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop()
