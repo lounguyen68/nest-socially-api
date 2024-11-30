@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { MessageType } from 'src/common/const';
 
 @Schema({ timestamps: true })
@@ -10,11 +11,15 @@ export class Message extends Document {
   @Prop()
   content?: string;
 
-  @Prop({ type: Types.ObjectId, ref: 'Member', required: true })
-  senderId: Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true })
+  sender: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Conversation', required: true })
-  conversationId: Types.ObjectId;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation',
+    required: true,
+  })
+  conversation: mongoose.Schema.Types.ObjectId;
 
   @Prop({ default: Date.now })
   createdAt: Date;

@@ -38,7 +38,7 @@ export class MembersService {
     });
 
     const existingUserIds = existingMembers.map((member) =>
-      member.userId.toString(),
+      member.user.toString(),
     );
     const newUserIds = userIds.filter(
       (userId) => !existingUserIds.includes(userId),

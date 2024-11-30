@@ -1,7 +1,14 @@
-import { IsString } from 'class-validator';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Transform } from 'class-transformer';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { ConversationType } from 'src/common/const';
 
-export class GetConversationsDto extends PaginationQueryDto {
+export class GetConversationDto {
+  @Transform(({ value }) => +value)
+  @IsEnum(ConversationType)
+  @IsNotEmpty()
+  type: ConversationType;
+
+  @IsNotEmpty()
   @IsString()
-  userId: string;
+  userId: string; // ID của đối phương
 }

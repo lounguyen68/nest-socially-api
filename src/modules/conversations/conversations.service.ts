@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { Conversation } from './interfaces/conversation.interface';
-import { MembersService } from '../members/members.service';
 import { Member } from '../members/interfaces/member.interface';
 
 @Injectable()
@@ -12,41 +11,37 @@ export class ConversationsService {
     @InjectModel(Conversation.name)
     private readonly conversationModel: Model<Conversation>,
     @InjectModel(Member.name)
-    private readonly memberModel: Model<Member>, // Inject thêm Member model để truy vấn
-    private readonly membersService: MembersService,
+    private readonly memberModel: Model<Member>,
   ) {}
 
-  /**
-   * Create a new conversation and add initial members.
-   * @param createConversationDto DTO containing type, name, and userIds
-   * @returns Created conversation
-   */
   async create(
     createConversationDto: CreateConversationDto,
   ): Promise<Conversation> {
     const { type, name, userIds } = createConversationDto;
 
-    // Kiểm tra userIds
     if (!userIds || userIds.length < 1) {
       throw new NotFoundException(
         'At least one user must be included in a conversation',
       );
     }
 
-    // Tạo conversation
-    const conversation = new this.conversationModel({
-      type,
-      name,
-      members: userIds,
-    });
+    const conversation = new this.conversationModel({ type, name });
 
-    const createdConversation = await conversation.save();
+    const membersToAdd = userIds.map((userId) => ({
+      user: new Types.ObjectId(userId),
+      conversation: conversation._id,
+    }));
 
-    // Thêm thành viên vào conversation
-    await this.membersService.addMembers({
-      conversationId: createdConversation._id.toString(),
-      userIds,
-    });
+    const members = await this.memberModel.insertMany(membersToAdd);
+
+    conversation.members = members.map((member) => member._id) as Member[];
+
+    await conversation.save();
+
+    const createdConversation = await this.findById(
+      conversation._id.toString(),
+      true,
+    );
 
     return createdConversation;
   }
@@ -55,12 +50,20 @@ export class ConversationsService {
     conversationId: string,
     populateMembers = false,
   ): Promise<Conversation> {
+    if (!Types.ObjectId.isValid(conversationId)) {
+      throw new NotFoundException('Invalid conversation ID');
+    }
+
     const query = this.conversationModel.findById(conversationId);
 
     if (populateMembers) {
       query.populate({
         path: 'members',
-        select: 'userId lastTimeSeen',
+        populate: {
+          path: 'user',
+          select: 'name email avatar',
+        },
+        select: 'lastTimeSeen',
       });
     }
 
@@ -73,43 +76,67 @@ export class ConversationsService {
     return conversation;
   }
 
-  async findAllByUser(userId: string, limit: number, skip: number) {
-    // Kiểm tra userId hợp lệ
+  async findAllByUserId(userId: string, limit = 10, skip = 0) {
     if (!Types.ObjectId.isValid(userId)) {
       throw new NotFoundException('Invalid user ID');
     }
 
-    // Tìm tất cả conversations mà user là thành viên
-    const members = await this.memberModel
-      .find({ userId: new Types.ObjectId(userId) })
-      .select('conversationId')
+    const memberConversations = await this.memberModel
+      .find({ user: new Types.ObjectId(userId) })
+      .select('conversation')
       .exec();
 
-    if (members.length === 0) {
-      return {
-        data: [],
-      };
+    if (memberConversations.length === 0) {
+      return { data: [] };
     }
 
-    // Truy vấn conversation theo danh sách conversationIds
-    const conversations = await this.conversationModel
-      .find()
+    const conversationIds = memberConversations.map(
+      (member) => member.conversation,
+    );
+
+    return await this.conversationModel
+      .find({ _id: { $in: conversationIds } })
       .populate({
         path: 'members',
         populate: {
-          path: 'userId', // Populate thông tin từ User
-          select: 'name email avatar', // Chỉ lấy các trường cần thiết từ User
+          path: 'user',
+          select: 'name email avatar',
         },
-        select: 'lastTimeSeen', // Lấy các trường cần thiết từ Member
+        select: 'lastTimeSeen',
       })
-      // .find({ 'members.userId': userId }) // Lọc conversation chứa userId trong members
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
+  }
 
-    return {
-      data: conversations,
-    };
+  async findConversationByUserIds(type: number, userIds: string[]) {
+    if (!Array.isArray(userIds) || userIds.length < 2) {
+      throw new Error('User IDs must include at least two users.');
+    }
+
+    const conversations = await this.conversationModel
+      .find({
+        type,
+      })
+      .populate({
+        path: 'members',
+        populate: {
+          path: 'user',
+          select: 'name email avatar',
+        },
+        select: 'lastTimeSeen',
+      })
+      .exec();
+
+    const conversation = conversations.find(
+      (conversation) =>
+        conversation.members.length === userIds.length &&
+        conversation.members.every((member) =>
+          userIds.includes(member.user._id.toString()),
+        ),
+    );
+
+    return conversation;
   }
 }

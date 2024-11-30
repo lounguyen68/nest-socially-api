@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { Metadata } from 'src/common/const/file.const';
 
 @Schema({ timestamps: true })
@@ -13,11 +14,11 @@ export class File extends Document {
   @Prop({ required: true })
   metadata: Metadata;
 
-  @Prop({ type: Types.ObjectId, ref: 'Message' })
-  messageId?: Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Message' })
+  message?: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Conversation' })
-  conversationId?: Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' })
+  conversation?: mongoose.Schema.Types.ObjectId;
 
   @Prop({ default: Date.now })
   createdAt: Date;
