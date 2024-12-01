@@ -61,7 +61,7 @@ export class ConversationsService {
         path: 'members',
         populate: {
           path: 'user',
-          select: 'name email avatar',
+          select: 'name email avatarPath',
         },
         select: 'lastTimeSeen',
       });
@@ -100,7 +100,7 @@ export class ConversationsService {
         path: 'members',
         populate: {
           path: 'user',
-          select: 'name email avatar',
+          select: 'name email avatarPath',
         },
         select: 'lastTimeSeen',
       })
@@ -123,7 +123,7 @@ export class ConversationsService {
         path: 'members',
         populate: {
           path: 'user',
-          select: 'name email avatar',
+          select: 'name email avatarPath',
         },
         select: 'lastTimeSeen',
       })

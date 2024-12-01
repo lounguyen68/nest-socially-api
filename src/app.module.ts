@@ -9,6 +9,7 @@ import { FilesModule } from './modules/files/files.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MembersModule } from './modules/members/members.module';
+import { ChatGateway } from './modules/chat-socket/chat.gateway';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { MembersModule } from './modules/members/members.module';
     ConversationsModule,
     MembersModule,
   ],
-  providers: [FilesService],
+  providers: [FilesService, ChatGateway],
   controllers: [FilesController],
 })
 export class AppModule {}

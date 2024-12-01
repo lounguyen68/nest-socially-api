@@ -7,6 +7,8 @@ import {
   UseGuards,
   Patch,
   Request,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './interfaces/user.interface';
@@ -14,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { UpdateAvatarUserDto } from './dto/update-avatar-user.dto';
 import { UpdateDeviceTokenDto } from './dto/update-device-token.dto';
+import { GetUsersDto } from './dto/get-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -26,8 +29,20 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getAllUsers(): Promise<User[]> {
-    return this.usersService.findAll();
+  async getAllUsers(@Req() req, @Query() query: GetUsersDto) {
+    const currentUserId = req.user._id;
+    const { limit, skip, keyword } = query;
+    const users = await this.usersService.findAll(
+      limit,
+      skip,
+      currentUserId,
+      keyword,
+    );
+
+    return {
+      success: true,
+      data: users,
+    };
   }
 
   @UseGuards(JwtAuthGuard)

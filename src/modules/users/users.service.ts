@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -27,24 +28,37 @@ export class UsersService {
   }
 
   async update(userId: string, userData: any): Promise<User> {
-    let user = await this.userModel.findById(userId).exec();
+    const user = await this.userModel
+      .findByIdAndUpdate(userId, userData, {
+        new: true, // Trả về đối tượng đã được cập nhật
+        runValidators: true, // Chạy validation nếu có
+      })
+      .select('-password')
+      .exec();
+
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
-    user = {
-      ...user,
-      ...userData,
-    };
-
-    await user.save();
-
-    user.password = undefined;
     return user;
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async findAll(
+    limit = 10,
+    skip = 0,
+    currentUserId: string,
+    keyword?: string,
+  ): Promise<User[]> {
+    const filter = {
+      _id: { $ne: currentUserId },
+      ...(keyword && { name: { $regex: keyword } }),
+    };
+    return this.userModel
+      .find(filter)
+      .select('-password')
+      .limit(limit)
+      .skip(skip)
+      .exec();
   }
 
   async findById(id: string): Promise<User> {
