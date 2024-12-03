@@ -11,7 +11,7 @@ export class File extends Document {
   @Prop()
   path: string;
 
-  @Prop({ required: true })
+  @Prop({ type: Metadata })
   metadata: Metadata;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Message' })

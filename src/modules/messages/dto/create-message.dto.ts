@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
 import { MessageType } from 'src/common/const';
+import { File } from 'src/modules/files/interfaces/file.interface';
 
 export class CreateMessageDto {
   @IsEnum(MessageType, { message: 'Type must be a valid MessageType' })
@@ -10,8 +11,12 @@ export class CreateMessageDto {
   content?: string;
 
   @IsString({ message: 'SenderId must be a string' })
-  senderId: string;
+  sender: string;
 
   @IsString({ message: 'ConversationId must be a string' })
-  conversationId: string;
+  conversation: string;
+
+  @IsArray()
+  @IsOptional()
+  attachments?: File[];
 }

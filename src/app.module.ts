@@ -22,7 +22,7 @@ import { ChatGateway } from './modules/chat-socket/chat.gateway';
     ConversationsModule,
     MembersModule,
   ],
-  providers: [FilesService, ChatGateway],
-  controllers: [FilesController],
+  providers: [ChatGateway],
+  controllers: [],
 })
 export class AppModule {}

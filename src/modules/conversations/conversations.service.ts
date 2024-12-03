@@ -104,6 +104,9 @@ export class ConversationsService {
         },
         select: 'lastTimeSeen',
       })
+      .populate({
+        path: 'lastMessage',
+      })
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limit)

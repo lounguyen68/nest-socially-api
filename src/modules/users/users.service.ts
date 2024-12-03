@@ -51,7 +51,7 @@ export class UsersService {
   ): Promise<User[]> {
     const filter = {
       _id: { $ne: currentUserId },
-      ...(keyword && { name: { $regex: keyword } }),
+      ...(keyword && { name: { $regex: keyword, $options: 'i' } }),
     };
     return this.userModel
       .find(filter)

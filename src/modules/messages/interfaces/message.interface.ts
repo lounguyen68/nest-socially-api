@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { MessageType } from 'src/common/const';
+import { File } from 'src/modules/files/interfaces/file.interface';
 
 @Schema({ timestamps: true })
 export class Message extends Document {
@@ -20,6 +21,9 @@ export class Message extends Document {
     required: true,
   })
   conversation: mongoose.Schema.Types.ObjectId;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }] })
+  attachments: File[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
