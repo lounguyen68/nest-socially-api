@@ -8,6 +8,8 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ClientEmitMessages, ServerEmitMessages } from './chat.const';
+import { Message } from '../messages/interfaces/message.interface';
+import { Conversation } from '../conversations/interfaces/conversation.interface';
 
 @WebSocketGateway({
   namespace: 'socket.io',
@@ -26,11 +28,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage(ClientEmitMessages.SEND_MESSAGE)
   handleMessage(
-    @MessageBody() data: string,
+    @MessageBody() data: Message,
     @ConnectedSocket() client: Socket,
-  ): string {
-    console.log('Message received: ', data);
-    client.emit(ServerEmitMessages.NEW_MESSAGE, `Server received: ${data}`);
-    return `Server received: ${data}`;
+  ): void {
+    client.broadcast.emit(ServerEmitMessages.NEW_MESSAGE, data);
+  }
+
+  @SubscribeMessage(ClientEmitMessages.CREATE_CONVERSATION)
+  handleConversation(
+    @MessageBody() data: Conversation,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    client.broadcast.emit(ServerEmitMessages.NEW_CONVERSATION, data);
   }
 }
