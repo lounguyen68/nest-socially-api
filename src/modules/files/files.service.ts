@@ -13,14 +13,19 @@ export class FilesService {
     });
   }
 
-  async getSignedUrl(key: string, contentType: string): Promise<string> {
+  async getSignedUrl(
+    key: string,
+    contentType: string,
+    uploadType: string,
+  ): Promise<string> {
     const params = {
       Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: key,
-      Expires: 300,
+      Key: `${uploadType}/${key}`,
+      Expires: 120,
+      ACL: 'public-read',
       ContentType: contentType,
     };
 
-    return this.s3.getSignedUrlPromise('putObject', params);
+    return this.s3.getSignedUrl('putObject', params);
   }
 }

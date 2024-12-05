@@ -53,13 +53,15 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('update-avatar')
-  async updateAvatar(
-    @Body() userData: UpdateAvatarUserDto,
-    @Request() req,
-  ): Promise<User> {
+  async updateAvatar(@Body() userData: UpdateAvatarUserDto, @Request() req) {
     const userId = req.user._id;
 
-    return this.usersService.update(userId, userData);
+    const user = await this.usersService.update(userId, userData);
+
+    return {
+      success: true,
+      data: user,
+    };
   }
 
   @UseGuards(JwtAuthGuard)
