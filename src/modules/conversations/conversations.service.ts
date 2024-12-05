@@ -57,14 +57,16 @@ export class ConversationsService {
     const query = this.conversationModel.findById(conversationId);
 
     if (populateMembers) {
-      query.populate({
-        path: 'members',
-        populate: {
-          path: 'user',
-          select: 'name email avatarPath',
-        },
-        select: 'lastTimeSeen',
-      });
+      query
+        .populate({
+          path: 'members',
+          populate: {
+            path: 'user',
+            select: 'name email avatarPath',
+          },
+          select: 'lastTimeSeen',
+        })
+        .populate('lastMessage');
     }
 
     const conversation = await query.exec();
