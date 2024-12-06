@@ -21,7 +21,7 @@ export class MessagesService {
     limit: number,
     skip: number,
   ): Promise<Message[]> {
-    return await this.messageModel
+    const messages = await this.messageModel
       .find({ conversation: conversationId })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -34,6 +34,18 @@ export class MessagesService {
         },
       })
       .exec();
+
+    const populatedMessages = await Promise.all(
+      messages.map(async (message) => {
+        if (message.type === 1) {
+          return await message.populate('attachments');
+        }
+
+        return message;
+      }),
+    );
+
+    return populatedMessages;
   }
 
   async createMessage(createMessageDto: CreateMessageDto) {
@@ -59,6 +71,8 @@ export class MessagesService {
     await this.conversationModel.findByIdAndUpdate(newMessage.conversation, {
       lastMessage: newMessage._id,
     });
+
+    newMessage.attachments = attachments;
 
     return newMessage;
   }

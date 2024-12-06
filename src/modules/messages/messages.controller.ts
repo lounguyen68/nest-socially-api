@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
   @Get()
-  async getConversations(@Query() paginationQuery: GetMessagesDto, @Req() req) {
+  async getMessages(@Query() paginationQuery: GetMessagesDto, @Req() req) {
     const { conversationId, limit, skip } = paginationQuery;
 
     // Kiểm tra conversationId có hợp lệ không
