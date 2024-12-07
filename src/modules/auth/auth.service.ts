@@ -31,12 +31,12 @@ export class AuthService {
     const { name, password } = userData;
     const user = await this.usersService.findByUsername(name);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Username or password is incorrect');
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Username or password is incorrect');
     }
 
     user.deviceToken = userData.deviceToken;
