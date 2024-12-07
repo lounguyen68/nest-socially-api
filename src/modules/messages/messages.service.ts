@@ -37,7 +37,7 @@ export class MessagesService {
 
     const populatedMessages = await Promise.all(
       messages.map(async (message) => {
-        if (message.type === 1) {
+        if ([MessageType.IMAGE, MessageType.FILE].includes(message.type)) {
           return await message.populate('attachments');
         }
 
