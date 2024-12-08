@@ -78,7 +78,7 @@ export class ConversationsService {
     return conversation;
   }
 
-  async findAllByUserId(userId: string, limit = 10, skip = 0) {
+  async findAllByUserId(userId: string, limit = 10, skip = 0, keyword = '') {
     if (!Types.ObjectId.isValid(userId)) {
       throw new NotFoundException('Invalid user ID');
     }
@@ -96,7 +96,7 @@ export class ConversationsService {
       (member) => member.conversation,
     );
 
-    return await this.conversationModel
+    const conversations = await this.conversationModel
       .find({ _id: { $in: conversationIds } })
       .populate({
         path: 'members',
@@ -110,9 +110,18 @@ export class ConversationsService {
         path: 'lastMessage',
       })
       .sort({ updatedAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
+      .exec()
+      .then((conversations) =>
+        conversations.filter((conversation) =>
+          conversation.members.some(
+            (member: Member) =>
+              member.user._id.toString() !== userId &&
+              member.user.name.toLowerCase().includes(keyword.toLowerCase()),
+          ),
+        ),
+      );
+
+    return conversations.slice(skip, skip + limit);
   }
 
   async findConversationByUserIds(type: number, userIds: string[]) {

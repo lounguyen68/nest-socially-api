@@ -71,12 +71,13 @@ export class ConversationsController {
     @Query() paginationQuery: GetConversationsDto,
     @Req() req,
   ) {
-    const { limit = 10, skip = 0 } = paginationQuery;
+    const { limit = 10, skip = 0, keyword } = paginationQuery;
 
     const conversations = await this.conversationsService.findAllByUserId(
       req.user._id,
       Number(limit),
       Number(skip),
+      keyword,
     );
 
     return {
