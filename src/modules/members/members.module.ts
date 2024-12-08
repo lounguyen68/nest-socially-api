@@ -17,6 +17,6 @@ import {
   ],
   controllers: [MembersController],
   providers: [MembersService],
-  exports: [MembersService],
+  exports: [MembersService, MongooseModule],
 })
 export class MembersModule {}
