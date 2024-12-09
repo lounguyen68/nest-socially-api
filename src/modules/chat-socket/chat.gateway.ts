@@ -43,7 +43,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: Message,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.data.user._id;
+    const userId = client.data.user?._id;
     const conversationId = data.conversation.toString();
     const isInChatRoom = client.rooms.has(conversationId);
 
@@ -70,7 +70,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() conversationId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const userId = client.data.user._id;
+    const userId = client.data.user?._id;
     await this.memberModel.updateOne(
       { user: userId, conversation: conversationId },
       { lastTimeSeen: new Date() },

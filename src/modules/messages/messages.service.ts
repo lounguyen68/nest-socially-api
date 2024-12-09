@@ -55,7 +55,7 @@ export class MessagesService {
 
     if (
       [MessageType.FILE, MessageType.IMAGE].includes(createMessageDto.type) &&
-      createMessageDto.attachments?.length
+      attachments?.length
     ) {
       const files = await this.fileModel.insertMany(
         attachments.map((file) => ({
@@ -72,8 +72,11 @@ export class MessagesService {
       lastMessage: newMessage._id,
     });
 
-    newMessage.attachments = attachments;
+    const response = {
+      ...newMessage.toObject(),
+      attachments,
+    } as Message;
 
-    return newMessage;
+    return response;
   }
 }
