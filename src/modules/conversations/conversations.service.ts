@@ -64,7 +64,7 @@ export class ConversationsService {
             path: 'user',
             select: 'name email avatarPath',
           },
-          select: 'lastTimeSeen',
+          select: 'lastTimeSeen p g publicKey',
         })
         .populate('lastMessage');
     }
@@ -104,7 +104,7 @@ export class ConversationsService {
           path: 'user',
           select: 'name email avatarPath',
         },
-        select: 'lastTimeSeen',
+        select: 'lastTimeSeen p g publicKey',
       })
       .populate({
         path: 'lastMessage',
@@ -139,7 +139,7 @@ export class ConversationsService {
           path: 'user',
           select: 'name email avatarPath',
         },
-        select: 'lastTimeSeen',
+        select: 'lastTimeSeen p g publicKey',
       })
       .exec();
 

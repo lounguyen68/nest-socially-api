@@ -25,6 +25,9 @@ export class Message extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }] })
   attachments: File[];
 
+  @Prop({ default: false })
+  isEncrypted?: boolean;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 
