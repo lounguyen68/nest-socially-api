@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsEnum, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 import { MessageType } from 'src/common/const';
 import { File } from 'src/modules/files/interfaces/file.interface';
 
@@ -19,4 +25,8 @@ export class CreateMessageDto {
   @IsArray()
   @IsOptional()
   attachments?: File[];
+
+  @IsBoolean()
+  @IsOptional()
+  isEncrypted?: boolean;
 }

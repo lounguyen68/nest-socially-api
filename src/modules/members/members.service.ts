@@ -8,6 +8,7 @@ import { Model, Types } from 'mongoose';
 import { AddMembersDto } from './dto/add-members.dto';
 import { Member } from './interfaces/member.interface';
 import { Conversation } from '../conversations/interfaces/conversation.interface';
+import { UpdateMemberDto } from './dto/update-member.dto';
 
 @Injectable()
 export class MembersService {
@@ -58,5 +59,16 @@ export class MembersService {
     const membersAdded = await this.memberModel.insertMany(membersToAdd);
 
     return membersAdded;
+  }
+
+  async updateMember(data: UpdateMemberDto): Promise<Member> {
+    const { memberId, ...body } = data;
+
+    const member = await this.memberModel.findByIdAndUpdate(
+      new Types.ObjectId(memberId),
+      body,
+    );
+
+    return member;
   }
 }

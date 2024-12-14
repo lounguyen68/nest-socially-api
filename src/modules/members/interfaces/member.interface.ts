@@ -19,6 +19,15 @@ export class Member extends Document {
   @Prop({ default: Date.now })
   lastTimeSeen: Date;
 
+  @Prop()
+  p?: string;
+
+  @Prop()
+  g?: string;
+
+  @Prop()
+  publicKey?: string;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 

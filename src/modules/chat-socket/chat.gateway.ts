@@ -85,4 +85,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     client.leave(conversationId);
   }
+
+  @SubscribeMessage(ClientEmitMessages.UPDATE_CONVERSATION)
+  async handleUpdateMember(
+    @MessageBody() conversation: Conversation,
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.broadcast.emit(ServerEmitMessages.UPDATE_CONVERSATION, {
+      conversation,
+    });
+  }
 }
