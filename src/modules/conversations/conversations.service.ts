@@ -89,7 +89,7 @@ export class ConversationsService {
       .exec();
 
     if (memberConversations.length === 0) {
-      return { data: [] };
+      return [];
     }
 
     const conversationIds = memberConversations.map(
