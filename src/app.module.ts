@@ -3,13 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth';
-import { FilesService } from './modules/files/files.service';
-import { FilesController } from './modules/files/files.controller';
 import { FilesModule } from './modules/files/files.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MembersModule } from './modules/members/members.module';
 import { ChatGateway } from './modules/chat-socket/chat.gateway';
+import { NotificationModule } from './modules/notifications/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +20,7 @@ import { ChatGateway } from './modules/chat-socket/chat.gateway';
     MessagesModule,
     ConversationsModule,
     MembersModule,
+    NotificationModule,
   ],
   providers: [ChatGateway],
   controllers: [],

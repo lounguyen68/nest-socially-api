@@ -62,7 +62,7 @@ export class ConversationsService {
           path: 'members',
           populate: {
             path: 'user',
-            select: 'name email avatarPath',
+            select: 'name email avatarPath deviceToken',
           },
           select: 'lastTimeSeen p g publicKey',
         })
