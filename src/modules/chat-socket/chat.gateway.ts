@@ -74,14 +74,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     const receiverMember = conversation.members.find(
-      (member) => member.user._id !== user?._id,
+      (member) => member.user._id.toString() !== user?._id,
     );
 
     const userIdsInConversation = this.conversationMap.get(conversationId);
 
     if (
       receiverMember &&
-      !userIdsInConversation?.includes(receiverMember.user._id as string)
+      !userIdsInConversation?.includes(receiverMember.user._id.toString())
     ) {
       pushTokens.push(receiverMember.user.deviceToken);
     }
